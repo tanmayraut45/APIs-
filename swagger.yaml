@@ -1,0 +1,771 @@
+openapi: 3.0.3
+info:
+  title: Mental Health Management API
+  description: |-
+    This API provides endpoints for user authentication, mental health tracking, communication and alerts, data analytics and reporting, integration with external services, and subscription management.
+  version: 1.0.0
+servers:
+  - url: https://mentalhealthapi.example.com/v1
+tags:
+  - name: User
+    description: Endpoints related to user authentication and profile management.
+  - name: Mental Health
+    description: Endpoints for mental health tracking and analysis.
+  - name: Communication
+    description: Endpoints for communication and alerts.
+  - name: Analytics
+    description: Endpoints for data analytics and reporting.
+  - name: Integration
+    description: Endpoints for integration with external services.
+  - name: Subscription
+    description: Endpoints for subscription and payment management.
+  - name: Reports
+    description: Endpoints related to generating and sending reports.
+  - name: Pricing
+    description: Endpoints for retrieving pricing details.
+
+paths:
+  /api/v1/reports/send/:
+    post:
+      tags:
+        - Reports
+      summary: Send user-generated reports
+      description: Send the mental health report to the user or a specified recipient.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user_id:
+                  type: string
+                report_type:
+                  type: string
+                recipient_email:
+                  type: string
+      responses:
+        '200':
+          description: Report sent successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+
+  /api/v1/pricing/:
+    get:
+      tags:
+        - Pricing
+      summary: Retrieve pricing details
+      description: Retrieve the pricing details for various subscription plans.
+      responses:
+        '200':
+          description: Pricing details retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  plans:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                        price:
+                          type: string
+                        features:
+                          type: array
+                          items:
+                            type: string
+
+  /api/v1/subscription/renew/:
+    post:
+      tags:
+        - Subscription
+      summary: Renew user subscription
+      description: Renew the user's subscription on a monthly basis.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user_id:
+                  type: string
+                subscription_plan:
+                  type: string
+      responses:
+        '200':
+          description: Subscription renewed successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                  next_renewal_date:
+                    type: string
+
+  /api/v1/data/submit/:
+    post:
+      tags:
+        - Mental Health
+      summary: Submit user data
+      description: Submit data (e.g., mental health logs, daily reflections) to the server.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user_id:
+                  type: string
+                data_type:
+                  type: string
+                data:
+                  type: object
+                  properties:
+                    mood:
+                      type: string
+                    intensity:
+                      type: integer
+                    notes:
+                      type: string
+      responses:
+        '200':
+          description: Data submitted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+
+  /auth/register:
+    post:
+      tags:
+        - User
+      summary: Register a new user
+      description: Register a new user with the app.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                email:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: User registered successfully
+
+  /auth/login:
+    post:
+      tags:
+        - User
+      summary: User login
+      description: Authenticate the user and provide a JWT token.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: User authenticated successfully
+
+  /auth/profile:
+    get:
+      tags:
+        - User
+      summary: Get user profile
+      description: Retrieve user profile information.
+      responses:
+        '200':
+          description: User profile retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  username:
+                    type: string
+                  email:
+                    type: string
+                  age:
+                    type: integer
+                  gender:
+                    type: string
+
+    put:
+      tags:
+        - User
+      summary: Update user profile
+      description: Update user profile information.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                email:
+                  type: string
+                age:
+                  type: integer
+                gender:
+                  type: string
+      responses:
+        '200':
+          description: User profile updated successfully
+
+  /auth/password-reset:
+    post:
+      tags:
+        - User
+      summary: Reset user password
+      description: Allow users to reset their password via email.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+      responses:
+        '200':
+          description: Password reset email sent
+
+  /mood/track:
+    post:
+      tags:
+        - Mental Health
+      summary: Track user mood
+      description: Log the user's mood at different times of the day.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user_id:
+                  type: string
+                mood:
+                  type: string
+                intensity:
+                  type: integer
+                timestamp:
+                  type: string
+      responses:
+        '200':
+          description: Mood logged successfully
+
+  /activity/log:
+    post:
+      tags:
+        - Mental Health
+      summary: Log user activity
+      description: Log activities that might impact the user's mental health (e.g., exercise, sleep).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user_id:
+                  type: string
+                activity_type:
+                  type: string
+                duration:
+                  type: integer
+                timestamp:
+                  type: string
+      responses:
+        '200':
+          description: Activity logged successfully
+
+  /assessment:
+    post:
+      tags:
+        - Mental Health
+      summary: Conduct mental health assessment
+      description: Conduct assessments to evaluate the user's mental health status based on their data inputs.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user_id:
+                  type: string
+                answers:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      question_id:
+                        type: integer
+                      answer:
+                        type: string
+      responses:
+        '200':
+          description: Assessment conducted successfully
+
+    get:
+      tags:
+        - Mental Health
+      summary: Retrieve mental health assessment
+      description: Retrieve the results of a previously conducted assessment.
+      responses:
+        '200':
+          description: Assessment retrieved successfully
+
+  /intervention/suggest:
+    get:
+      tags:
+        - Mental Health
+      summary: Get intervention suggestions
+      description: Provide personalized intervention suggestions based on the user's data.
+      responses:
+        '200':
+          description: Intervention suggestions retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  interventions:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        type:
+                          type: string
+                        description:
+                          type: string
+
+  /notifications/guardian:
+    post:
+      tags:
+        - Communication
+      summary: Send guardian notification
+      description: Send alerts or notifications to the user's guardian in case of high-risk behavior.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user_id:
+                  type: string
+                guardian_email:
+                  type: string
+                alert_type:
+                  type: string
+                message:
+                  type: string
+      responses:
+        '200':
+          description: Guardian notified successfully
+
+  /emergency/contact:
+    post:
+      tags:
+        - Communication
+      summary: Set emergency contact
+      description: Allow the user to set or update emergency contact information.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user_id:
+                  type: string
+                contact_name:
+                  type: string
+                contact_number:
+                  type: string
+                relationship:
+                  type: string
+      responses:
+        '200':
+          description: Emergency contact set successfully
+
+  /events/trigger:
+    post:
+      tags:
+        - Communication
+      summary: Trigger an event
+      description: Trigger an event (e.g., mood drop, missed sleep) that the system should respond to.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user_id:
+                  type: string
+                event_type:
+                  type: string
+                details:
+                  type: string
+      responses:
+        '200':
+          description: Event triggered successfully
+
+  /analytics/data:
+    post:
+      tags:
+        - Analytics
+      summary: Analyze user data
+      description: Analyze the user's data to find trends or correlations (e.g., mood vs. exercise).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Data analysis completed successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  correlations:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        activity:
+                          type: string
+                        correlation:
+                          type: string
+
+    get:
+      tags:
+        - Analytics
+      summary: Retrieve data analysis
+      description: Retrieve previously conducted data analysis.
+      responses:
+        '200':
+          description: Data analysis retrieved successfully
+
+  /reports/generate:
+    post:
+      tags:
+        - Analytics
+      summary: Generate user report
+      description: Generate detailed reports on the user's mental health based on their data inputs.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user_id:
+                  type: string
+                report_type:
+                  type: string
+                start_date:
+                  type: string
+                end_date:
+                  type: string
+      responses:
+        '200':
+          description: Report generated successfully
+
+  /history/data:
+    get:
+      tags:
+        - Analytics
+      summary: Retrieve historical data
+      description: Retrieve historical data for a specific period (e.g., past month's mood logs).
+      responses:
+        '200':
+          description: Historical data retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        date:
+                          type: string
+                        mood:
+                          type: string
+                        intensity:
+                          type: integer
+
+  /integration/health:
+    post:
+      tags:
+        - Integration
+      summary: Integrate with health data
+      description: Integrate with external health data sources (e.g., Apple Health, Google Fit) to collect physical activity data.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user_id:
+                  type: string
+                source:
+                  type: string
+                data:
+                  type: object
+                  properties:
+                    steps:
+                      type: integer
+                    calories_burned:
+                      type: integer
+      responses:
+        '200':
+          description: Health data integrated successfully
+
+    get:
+      tags:
+        - Integration
+      summary: Retrieve health data integration
+      description: Retrieve data from external health sources.
+      responses:
+        '200':
+          description: Health data retrieved successfully
+
+  /integration/browser-history:
+    post:
+      tags:
+        - Integration
+      summary: Analyze browser history
+      description: Analyze the user's browser history to identify any concerning patterns or searches.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user_id:
+                  type: string
+                history_data:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      url:
+                        type: string
+                      title:
+                        type: string
+      responses:
+        '200':
+          description: Browser history analyzed successfully
+
+  /subscription/manage:
+    post:
+      tags:
+        - Subscription
+      summary: Manage subscription
+      description: Manage subscriptions, including upgrades, downgrades, and cancellations.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user_id:
+                  type: string
+                action:
+                  type: string
+                new_plan:
+                  type: string
+      responses:
+        '200':
+          description: Subscription managed successfully
+
+  /payment/process:
+    post:
+      tags:
+        - Subscription
+      summary: Process payment
+      description: Process payments for subscriptions or other purchases within the app.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user_id:
+                  type: string
+                amount:
+                  type: number
+                currency:
+                  type: string
+                payment_method:
+                  type: string
+                card_details:
+                  type: object
+                  properties:
+                    number:
+                      type: string
+                    expiry:
+                      type: string
+                    cvv:
+                      type: string
+      responses:
+        '200':
+          description: Payment processed successfully
+
+  /payment/invoice:
+    get:
+      tags:
+        - Subscription
+      summary: Retrieve invoices
+      description: Retrieve past invoices for the user's account.
+      responses:
+        '200':
+          description: Invoices retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  invoices:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        date:
+                          type: string
+                        amount:
+                          type: number
+                        status:
+                          type: string
+
+  /settings:
+    get:
+      tags:
+        - Miscellaneous
+      summary: Get app settings
+      description: Retrieve app settings such as notifications, privacy, and preferences.
+      responses:
+        '200':
+          description: Settings retrieved successfully
+
+    post:
+      tags:
+        - Miscellaneous
+      summary: Update app settings
+      description: Update app settings such as notifications, privacy, and preferences.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user_id:
+                  type: string
+                settings:
+                  type: object
+                  properties:
+                    notifications_enabled:
+                      type: boolean
+                    language:
+                      type: string
+                    dark_mode:
+                      type: boolean
+      responses:
+        '200':
+          description: Settings updated successfully
+
+  /feedback:
+    post:
+      tags:
+        - Miscellaneous
+      summary: Submit feedback
+      description: Collect user feedback on app features or performance.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user_id:
+                  type: string
+                feedback:
+                  type: string
+      responses:
+        '200':
+          description: Feedback submitted successfully
+
+  /content/articles:
+    get:
+      tags:
+        - Miscellaneous
+      summary: Retrieve content articles
+      description: Retrieve mental health articles, tips, or guides.
+      responses:
+        '200':
+          description: Articles retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  articles:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        title:
+                          type: string
+                        url:
+                          type: string
